@@ -93,6 +93,21 @@
 
     frame = getFrameByDirection();
     if (isAlternate) { frame = getAlternateFrame(frame); }
+
+    if (currentTime - idleTime > 10000) {
+      frame = 9;
+    }
+    if (currentTime - idleTime > 10100) {
+      frame = 0;
+    }
+    if (currentTime - idleTime > 10250) {
+      frame = 9;
+    }
+    if (currentTime - idleTime > 10400) {
+      frame = 0;
+      resetIdleTime();
+    }
+
     var position = frame * 20;
     var deltaX = 0;
     var deltaY = 0;
@@ -145,8 +160,12 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
-  function canvasOnKeydown (e) {
+  function resetIdleTime () {
+    idleTime = new Date().getTime();
+  }
 
+  function canvasOnKeydown (e) {
+    resetIdleTime();
     switch (e.keyCode) {
       case 37: // left
         direction = 1;
@@ -176,6 +195,7 @@
   var positionX = 40;
   var positionY = 40;
   var speed = 1;
+  var idleTime;
 
   var img = new Image();
 
@@ -207,6 +227,7 @@
     drawImage();
     loop();
     canvas.focus();
+    idleTime = new Date().getTime();
   }
 
   init();
