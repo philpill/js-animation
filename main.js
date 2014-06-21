@@ -43,31 +43,13 @@
   function getAlternateFrame (frame) {
 
     var alternate = 0;
-    switch (frame) {
-      case 1:
-        alternate = 2;
-        break;
-      case 2:
-        alternate = 1;
-        break;
-      case 3:
-        alternate = 4;
-        break;
-      case 4:
-        alternate = 3;
-        break;
-      case 5:
-        alternate = 6;
-        break;
-      case 6:
-        alternate = 5;
-        break;
-      case 7:
-        alternate = 8;
-        break;
-      case 8:
-        alternate = 7;
-        break;
+
+    if (!frame) {
+      alternate = 0;
+    } else if (frame % 2 === 1) {
+      alternate = frame + 1;
+    } else {
+      alternate = frame - 1;
     }
 
     return alternate;
