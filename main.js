@@ -12,6 +12,7 @@
     fpsEl.innerHTML = Math.round(fps*100)/100;
     clearCanvas();
     drawImage();
+    setDirectionByDestination();
     drawSprite();
   }
 
@@ -143,17 +144,23 @@
 
   function pauseLinkOnClick (e) {
     e.preventDefault();
-    console.log(e);
-    window.cancelAnimationFrame(id);
-    id = null;
+    pause();
   }
 
   function resumeLinkOnClick (e) {
     e.preventDefault();
-    console.log(e);
+    resume();
+  }
+
+  function resume () {
     if (!id) {
       loop();
     }
+  }
+
+  function pause () {
+    window.cancelAnimationFrame(id);
+    id = null;
   }
 
   function clearCanvas () {
@@ -162,6 +169,41 @@
 
   function resetIdleTime () {
     idleTime = new Date().getTime();
+  }
+
+  function canvasOnClick (e) {
+    resume();
+    resetIdleTime();
+    var position = getClickPosition(e);
+    setDestination(position);
+  }
+
+  function setDestination (position) {
+    destinationX = position.x;
+    destinationY = position.y;
+  }
+
+  function getClickPosition (e) {
+    var x;
+    var y;
+    if (e.pageX || e.pageY) {
+      x = e.pageX;
+      y = e.pageY;
+    }
+    else {
+      x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+      y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    }
+    x -= canvas.offsetLeft;
+    y -= canvas.offsetTop;
+    return {
+      x : x,
+      y : y
+    }
+  }
+
+  function canvasOnBlur (e) {
+    pause();
   }
 
   function canvasOnKeydown (e) {
@@ -182,6 +224,39 @@
     };
   }
 
+  function setDirectionByDestination () {
+
+    if (!destinationX && !destinationY) {
+      direction = 0;
+      return;
+    }
+
+    if (destinationX === positionX) {
+      destinationX = null;
+    }
+
+    if (destinationY === positionY) {
+      destinationY = null;
+    }
+
+    if (destinationX && destinationX > positionX) {
+      direction = 3;
+    }
+
+    if (destinationX && destinationX < positionX) {
+      direction = 1;
+    }
+
+    if (destinationY && destinationY > positionY) {
+      direction = 4;
+    }
+
+    if (destinationY && destinationY < positionY) {
+      direction = 2;
+    }
+
+  }
+
   function canvasOnKeyup (e) {
     direction = 0;
     animationId = null;
@@ -196,6 +271,8 @@
   var positionY = 40;
   var speed = 1;
   var idleTime;
+  var destinationX;
+  var destinationY;
 
   var img = new Image();
 
@@ -206,6 +283,8 @@
     resumeLink.addEventListener('click', resumeLinkOnClick, false);
     canvas.addEventListener('keydown', canvasOnKeydown, false);
     canvas.addEventListener('keyup', canvasOnKeyup, false);
+    canvas.addEventListener('click', canvasOnClick, false);
+    canvas.addEventListener('blur', canvasOnBlur, false);
   };
 
   function loop () {
