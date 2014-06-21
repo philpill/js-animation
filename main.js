@@ -113,11 +113,15 @@
           break;
       }
 
-      positionX = (positionX + deltaX * speed) || 0;
-      positionY = (positionY + deltaY * speed) || 0;
+      positionX = (positionX + deltaX * speed);
+      positionY = (positionY + deltaY * speed);
     }
 
+    if (positionX < 0) { positionX = 0; }
+    if (positionY < 20) { positionY = 20; }
 
+    if (positionX > canvas.width - 20) { positionX = canvas.width - 20; }
+    if (positionY > canvas.height - 20) { positionY = canvas.height - 20; }
 
     ctx.drawImage(img, position, 0, 20, 20, positionX, positionY, 20, 20);
   }
